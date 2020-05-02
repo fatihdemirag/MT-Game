@@ -78,9 +78,10 @@ class _ResultState extends State<Result> {
             child: Container(
               color: primaryButtonColor,
               margin: EdgeInsets.only(top: 10.0),
-              height: MediaQuery.of(context).size.height * 0.1,
+              height: MediaQuery.of(context).size.height * 0.2,
+              padding: EdgeInsets.only(bottom: 45),
               child: Center(
-                child: Text('Yeniden Oyna', style: primaryButtonStyle),
+                child: Text('Yeniden Oyna', style: secondaryButtonColorStyle),
               ),
             ),
           ),

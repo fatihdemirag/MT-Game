@@ -11,6 +11,9 @@ class Game extends StatefulWidget {
   _GameState createState() => _GameState();
 }
 
+String appId="ca-app-pub-9361831426651608~1855814756";
+String bannerId="ca-app-pub-9361831426651608/1810672590";
+
 class _GameState extends State<Game> {
   String score="0";
   String operation="";
@@ -28,6 +31,9 @@ class _GameState extends State<Game> {
   List<int> resultArray = new List(4);
 
   Timer timer;
+
+  BannerAd bannerAd;
+
   void timerStart()
   {
     timer=Timer.periodic(
@@ -97,11 +103,15 @@ class _GameState extends State<Game> {
 
     correctNumber++;
 
-    if(correctNumber>3)
-    {
-      star++;
-      correctNumber=0;
-    }
+    setState(() {
+      if(correctNumber>3)
+      {
+        if(star==0)
+          starColor=Colors.amberAccent;
+        star++;
+        correctNumber=0;
+      }
+    });
     time=15;
 
     _sharedPreferences("star",star.toString());
@@ -169,6 +179,7 @@ class _GameState extends State<Game> {
   @override
   void dispose() {
     timer.cancel();
+    bannerAd?.dispose();
     super.dispose();
   }
 
@@ -194,10 +205,9 @@ class _GameState extends State<Game> {
 
     });
 
-    FirebaseAdMob.instance.initialize(appId: "ca-app-pub-9361831426651608~1855814756").then((value){
-       myBanner..load()..show();
-    });
 
+    FirebaseAdMob.instance.initialize(appId: appId);
+    bannerAd = createBannerAd()..load()..show();
     super.initState();
   }
 
@@ -564,14 +574,13 @@ MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
   testDevices: <String>["8A4B46F00AB99D16E61FD645F4FD1EFB"], // Android emulators are considered test devices
 );
 
-BannerAd myBanner = BannerAd(
-  // Replace the testAdUnitId with an ad unit id from the AdMob dash.
-  // https://developers.google.com/admob/android/test-ads
-  // https://developers.google.com/admob/ios/test-ads
-  adUnitId: "ca-app-pub-9361831426651608~1855814756",
-  size: AdSize.smartBanner,
-  targetingInfo: targetingInfo,
-  listener: (MobileAdEvent event) {
-    print("BannerAd event is $event");
-  },
-);
+BannerAd createBannerAd() {
+  return BannerAd(
+      adUnitId: bannerId,
+      //Change BannerAd adUnitId with Admob ID
+      size: AdSize.banner,
+      targetingInfo: targetingInfo,
+      listener: (MobileAdEvent event) {
+        print("BannerAd $event");
+      });
+}
